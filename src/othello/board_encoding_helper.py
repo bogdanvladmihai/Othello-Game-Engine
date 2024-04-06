@@ -53,10 +53,11 @@ def adjust_cells(white_cells, black_cells, i, j, player) -> tuple:
     to_change |= path_code
 
   # at the end, just update the bitmasks
-  new_white_cells = (white_cells ^ to_change) | encode_cell(i, j)
+  new_white_cells = white_cells ^ to_change | encode_cell(i, j)
   new_black_cells = black_cells ^ to_change
   if swapped:
-    new_white_cells, new_black_cells = new_black_cells, new_white_cells
+    new_white_cells = white_cells ^ to_change
+    new_black_cells = black_cells ^ to_change | encode_cell(i, j)
   return new_white_cells, new_black_cells
 
 # applies the move (i, j) made by player to the board

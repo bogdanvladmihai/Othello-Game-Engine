@@ -63,3 +63,8 @@ class Board:
         # check if the cell is in the bitmask
         if cells & helper.encode_cell(i, j) > 0:
           self.draw_piece(window, i, j, consts.PINK, consts.HIGHLIGHT_RADIUS)
+
+  # make move (x, y) made by player
+  def make_move(self, x, y, player) -> None:
+    # we know the move is valid, so we can apply it
+    self.white_cells, self.black_cells = helper.adjust_cells(self.white_cells, self.black_cells, x, y, player)
