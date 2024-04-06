@@ -1,7 +1,8 @@
 import pygame
 from othello import consts
-from othello.board import Board
-from othello import board_encoding_helper as helper
+from othello.game import Game
+import engine
+import menu
 
 # function to calulcate the cell from the mouse position
 def calculate_cell(pos) -> tuple:
@@ -10,53 +11,49 @@ def calculate_cell(pos) -> tuple:
   y -= consts.OFFSET // 2
   return y // consts.INIT_SQUARE_SIZE, x // consts.INIT_SQUARE_SIZE
 
-# check if the move is valid
-def can_move(board, x, y, turn) -> bool:
-  target = board.white_cells
-  if turn == consts.BLACK_PLAYER:
-    target = board.black_cells
-  # check if the cell is empty
-  if not helper.is_empty(board.black_cells | board.white_cells, x, y):
-    return False
-  # if it is, we should find if it has at least one neighbor that belongs to the current player
-  has_at_least_one_neighbor = False
-  for (dx, dy) in consts.DIRECTIONS:
-    x_new, y_new = x + dx, y + dy
-    if helper.is_inside(x_new, y_new) and (helper.encode_cell(x_new, y_new) & target) > 0:
-      has_at_least_one_neighbor = True
-      break
-  return has_at_least_one_neighbor
+# function to print the winner and end the game
+def end_game(white_cells, black_cells, window):
+  window.fill(consts.BACKGROUND)
+  font = pygame.font.Font(None, consts.FONT_SIZE)
+  winner_color = consts.PINK
+  if white_cells > black_cells:
+    text = font.render("White wins!", True, consts.WHITE)
+    winner_color = consts.WHITE
+  elif black_cells > white_cells:
+    text = font.render("Black wins!", True, consts.BLACK)
+    winner_color = consts.BLACK
+    white_cells, black_cells = black_cells, white_cells
+  else:
+    text = font.render("It's a tie!", True, consts.PINK)
+  # just print the winner and the score at the end
+  text_rect = text.get_rect(center = (consts.WIDTH // 2, consts.HEIGHT // 2))
+  final_score = font.render(f"{white_cells} - {black_cells}", True, winner_color)
+  final_score_rect = final_score.get_rect(center = (consts.WIDTH // 2, consts.HEIGHT // 2 + consts.FONT_SIZE))
+  window.blit(final_score, final_score_rect)
+  window.blit(text, text_rect)
+  pygame.display.update()
+  # wait for the user to close the window
+  running = True
+  while running:
+    for event in pygame.event.get():
+      if event.type == pygame.QUIT:
+        running = False
 
-# check if the player can not make a move
-def can_not_make_a_move(board, turn) -> bool:
-  cells = board.white_cells
-  if turn == consts.BLACK_PLAYER:
-    cells = board.black_cells
-  return helper.get_possible_moves(cells, board.black_cells | board.white_cells) == 0
-
-# function to create the game window and run the game
-def main():
-  # initialize the game window
-  window = pygame.display.set_mode((consts.WIDTH + consts.OFFSET, consts.HEIGHT + consts.OFFSET))
-  pygame.display.set_caption("Othello")
-  board = Board()
-  turn = consts.WHITE_PLAYER
+# function to run the game
+def run_game(window, game_engine, engine_player) -> None:
+  game = Game(window)
   running = True
   while running:
     # check if the game is over
-    if board.white_cells | board.black_cells == (1 << consts.ROWS * consts.COLUMNS) - 1:
-      # count the number of pieces for each player
-      white_cells = bin(board.white_cells).count("1")
-      black_cells = bin(board.black_cells).count("1")
-      # I should print the winner in a new pygame window
-      # TODO: print the winner
+    if game.is_over():
+      (white_cells, black_cells) = game.get_score()
+      end_game(white_cells, black_cells, window)
       break
-
-    # check if the player can move
-    if can_not_make_a_move(board, turn):
-      turn = not turn
+    # check if it is the engine's turn
+    if game.turn == engine_player:
+      (x, y) = game_engine.get_move(game.board.white_cells, game.board.black_cells)
+      game.apply_move(x, y)
       continue
-
     # check for events
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
@@ -65,14 +62,22 @@ def main():
         # get the cell from the mouse position and check if it is a valid move
         pos = pygame.mouse.get_pos()
         (x, y) = calculate_cell(pos)
-        if can_move(board, x, y, turn):
-          board.make_move(x, y, turn)
-          turn = not turn
+        if game.can_move(x, y):
+          game.apply_move(x, y)
           break
     # update the new board
-    board.draw_board(window, turn)
-    pygame.display.update()
+    game.update_board(window)
 
+# function to create the window and run the menu+game
+def main():
+  pygame.init()
+  # initialize the game window
+  window = pygame.display.set_mode((consts.WIDTH + consts.OFFSET, consts.HEIGHT + consts.OFFSET))
+  pygame.display.set_caption("Othello")
+  user_menu = menu.Menu(window)
+  side, depth = user_menu.get_game_settings()
+  game_engine = engine.Engine(side, depth)
+  run_game(window, game_engine, side)
   pygame.quit()
 
 if __name__ == "__main__":

@@ -1,5 +1,3 @@
-import pygame
-
 # window dimensions
 WIDTH = 400
 HEIGHT = 400
@@ -36,3 +34,15 @@ CAPTURE_DIRECTIONS = [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, 1)
 
 # powers of two
 POWS = [[1 << (i * COLUMNS + j) for j in range(COLUMNS)] for i in range(ROWS)]
+
+# font size
+FONT_SIZE = 50
+BUTTON_FONT_SIZE = 36
+
+# game dificulty
+DIFICULTY_EASY = 0
+DIFICULTY_MEDIUM = 1
+DIFICULTY_HARD = 2
+EASY_DEPTH = 3
+MEDIUM_DEPTH = 4
+HARD_DEPTH = 5 # hope this is not too optimistic
