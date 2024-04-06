@@ -1,1 +1,1 @@
-# Hex-Game-Assistant
+# Othello-Game-Engine
