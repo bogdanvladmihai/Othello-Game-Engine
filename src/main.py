@@ -76,8 +76,8 @@ def main():
   pygame.display.set_caption("Othello")
   user_menu = menu.Menu(window)
   side, depth = user_menu.get_game_settings()
-  game_engine = engine.Engine(side, depth)
-  run_game(window, game_engine, side)
+  game_engine = engine.Engine(not side, depth)
+  run_game(window, game_engine, not side)
   pygame.quit()
 
 if __name__ == "__main__":

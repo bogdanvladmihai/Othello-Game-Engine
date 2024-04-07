@@ -26,6 +26,10 @@ def get_possible_moves(target, occupied) -> int:
             possible_cells |= encode_cell(x, y)
   return possible_cells
 
+# iterate over the active cells of the mask
+def iterate_over_active_cell(mask) -> tuple:
+  pass
+
 # adjust the board after the move (i, j) was made by player
 def adjust_cells(white_cells, black_cells, i, j, player) -> tuple:
   # assume the move is made by white

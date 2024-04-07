@@ -50,9 +50,9 @@ class Board:
 
   # calculates the legal moves for the player and highlights them
   def highlight_legal_moves(self, window, player) -> None:
-    target = self.white_cells
+    target = self.black_cells
     if player == consts.BLACK_PLAYER:
-      target = self.black_cells
+      target = self.white_cells
     possible_cells = helper.get_possible_moves(target, self.black_cells | self.white_cells)
     self.add_highlight(window, possible_cells)
 
