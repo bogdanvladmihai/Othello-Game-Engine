@@ -10,10 +10,10 @@ class Game:
     self.board = Board()
     self.turn = consts.BLACK_PLAYER
 
-  # checks if all the cells are occupied
+  # check if the game is over
   def is_over(self) -> bool:
-    return self.board.white_cells | self.board.black_cells == (1 << consts.ROWS * consts.COLUMNS) - 1
-  
+    return helper.is_over(self.board.black_cells, self.board.white_cells)
+
   # check if the move is valid
   def can_move(self, x, y) -> bool:
     if not helper.is_inside(x, y):
@@ -25,13 +25,7 @@ class Game:
     if not helper.is_empty(self.board.black_cells | self.board.white_cells, x, y):
       return False
     # if it is, we should find if it has at least one neighbor that belongs to the other player
-    has_at_least_one_neighbor = False
-    for (dx, dy) in consts.DIRECTIONS:
-      x_new, y_new = x + dx, y + dy
-      if helper.is_inside(x_new, y_new) and (helper.encode_cell(x_new, y_new) & target) > 0:
-        has_at_least_one_neighbor = True
-        break
-    return has_at_least_one_neighbor
+    return helper.encode_cell(x, y) & helper.get_possible_moves(target, self.board.black_cells | self.board.white_cells) > 0
   
   # check if the player can not make a move
   def can_not_make_a_move(self) -> bool:
@@ -43,7 +37,7 @@ class Game:
   # apply the move to the board
   def apply_move(self, x, y) -> None:
     if x is not None and y is not None:
-      self.board.white_cells, self.board.black_cells = helper.adjust_cells(self.board.white_cells, self.board.black_cells, x, y, self.turn)
+      self.board.white_cells, self.board.black_cells = helper.apply_move(self.board.white_cells, self.board.black_cells, x, y, self.turn)
     self.turn = not self.turn
     if self.can_not_make_a_move():
       self.turn = not self.turn

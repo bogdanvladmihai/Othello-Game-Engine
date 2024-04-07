@@ -34,10 +34,12 @@ CAPTURE_DIRECTIONS = [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, 1)
 
 # powers of two
 POWS = [[1 << (i * COLUMNS + j) for j in range(COLUMNS)] for i in range(ROWS)]
+POWS_LOOKUP = {(1 << (i * COLUMNS + j)): (i, j) for i in range(ROWS) for j in range(COLUMNS)}
 
-# font size
+# font size + gameplay
 FONT_SIZE = 50
 BUTTON_FONT_SIZE = 36
+WAIT_TO_SEE_THE_MOVE = 500
 
 # game dificulty
 DIFICULTY_EASY = 0
@@ -46,3 +48,6 @@ DIFICULTY_HARD = 2
 EASY_DEPTH = 3
 MEDIUM_DEPTH = 4
 HARD_DEPTH = 5 # hope this is not too optimistic
+
+# evaluation consts
+INF = POWS[ROWS - 1][COLUMNS - 1] * 2

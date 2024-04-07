@@ -67,4 +67,4 @@ class Board:
   # make move (x, y) made by player
   def make_move(self, x, y, player) -> None:
     # we know the move is valid, so we can apply it
-    self.white_cells, self.black_cells = helper.adjust_cells(self.white_cells, self.black_cells, x, y, player)
+    self.white_cells, self.black_cells = helper.apply_move(self.white_cells, self.black_cells, x, y, player)

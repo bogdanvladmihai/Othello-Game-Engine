@@ -30,6 +30,7 @@ class Menu:
             return consts.WHITE_PLAYER
           elif black_rect.collidepoint(pos):
             return consts.BLACK_PLAYER
+    return None
 
   # gets the dificulty of the game
   def dificulty(self, color) -> int:
@@ -58,6 +59,7 @@ class Menu:
             return consts.DIFICULTY_MEDIUM
           elif hard_rect.collidepoint(pos):
             return consts.DIFICULTY_HARD
+    return None
           
   # plots a button with the given text, color and position
   def plot_button(self, font, text, color, pos) -> pygame.Rect:
@@ -69,8 +71,12 @@ class Menu:
   # gets the game settings from the user
   def get_game_settings(self) -> tuple:
     side = self.get_side()
+    if side is None:
+      return None, None
     color = consts.WHITE if side == consts.WHITE_PLAYER else consts.BLACK
     dificulty = self.dificulty(color)
+    if dificulty is None:
+      return None, None
     if dificulty == consts.DIFICULTY_EASY:
       depth = consts.EASY_DEPTH
     elif dificulty == consts.DIFICULTY_MEDIUM:

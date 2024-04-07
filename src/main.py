@@ -52,6 +52,8 @@ def run_game(window, game_engine, engine_player) -> None:
     # check if it is the engine's turn
     if game.turn == engine_player:
       (x, y) = game_engine.get_move(game.board.white_cells, game.board.black_cells)
+      if x is not None and y is not None:
+        pygame.time.wait(consts.WAIT_TO_SEE_THE_MOVE)
       game.apply_move(x, y)
       continue
     # check for events
@@ -76,6 +78,9 @@ def main():
   pygame.display.set_caption("Othello")
   user_menu = menu.Menu(window)
   side, depth = user_menu.get_game_settings()
+  if side is None:
+    pygame.quit()
+    return
   game_engine = engine.Engine(not side, depth)
   run_game(window, game_engine, not side)
   pygame.quit()
