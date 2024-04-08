@@ -1,13 +1,15 @@
 import othello.consts as consts
 import othello.board_encoding_helper as helper
 from functools import cache
+from othello.consts import E1, E2, E3, E4, M1, M2, M3, M4, L1, L2, L3, L4
 
 class Engine:
   # function to init the engine with a side and a depth
   # note that black tries to maximize the score, while white tries to minimize it
-  def __init__(self, side, depth) -> None:
+  def __init__(self, side, depth, eval_function) -> None:
     self.side = side
     self.depth = depth
+    self.eval_function = eval_function
   
   # function to just get any move
   def get_any_move(self, white_cells, black_cells) -> tuple:
@@ -58,7 +60,7 @@ class Engine:
     potential_mobility = self.calculate_potential_mobility(white_cells, black_cells)
     corners = self.calculate_corners(white_cells, black_cells)
     # coin_parity, mobility, potential_mobility, corners
-    return 1.3 * coin_parity + 1 * mobility + 0.5 * potential_mobility + 0.5 * corners
+    return E1 * coin_parity + E2 * mobility + E3 * potential_mobility + E4 * corners
 
   # function to evaluate the board in the mid game
   # the evaluation function is not based on evaporation anymore
@@ -69,7 +71,7 @@ class Engine:
     potential_mobility = self.calculate_potential_mobility(white_cells, black_cells)
     corners = self.calculate_corners(white_cells, black_cells)
     # mobility, corners, potential_mobility, coin_parity
-    return 1.8 * mobility + 1.7 * corners + 1.2 * potential_mobility + 1 * coin_parity
+    return M1 * mobility + M2 * corners + M3 * potential_mobility + M4 * coin_parity
 
   # function to evaluate the board in the late game
   # the evaluation function is now more foccused on the number of pieces
@@ -80,7 +82,7 @@ class Engine:
     potential_mobility = self.calculate_potential_mobility(white_cells, black_cells)
     corners = self.calculate_corners(white_cells, black_cells)
     # corners, coin_parity, mobility, potential_mobility
-    return 2.1 * corners + 1.5 * coin_parity + 1.2 * mobility + 1 * potential_mobility
+    return L1 * corners + L2 * coin_parity + L3 * mobility + L4 * potential_mobility
 
   # function to evaluate the board using static evaluation
   # the evaluation function is based on the board weights

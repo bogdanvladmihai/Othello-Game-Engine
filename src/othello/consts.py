@@ -66,3 +66,19 @@ STATIC_WEIGHTS_BOARD = [
   [99, -8, 8, 6, 6, 8, -8, 99]
 ]
 STABILIZER = 100
+
+# constants for the evaluation function - early game
+E1 = 1.3
+E2 = 1
+E3 = 0.5
+E4 = 0.5
+# constants for the evaluation function - mid game
+M1 = 1.8
+M2 = 1.7
+M3 = 1.2
+M4 = 1
+# constants for the evaluation function - late game
+L1 = 2.1
+L2 = 1.5
+L3 = 1.2
+L4 = 1
