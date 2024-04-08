@@ -38,6 +38,7 @@ Potential mobility is the number of squares that are adjacent to at least one of
 \quad \textbf{Stability} is the number of discs that can't be flipped. 
 Such discs are called \textbf{stable discs}. For example, the corners are stable discs, since they can't be flipped.
 Since the goal of the game is to have as many discs as possible, knowing the number of discs that will defenetly be yours is important.
+We will call a disc unstabile if it can be flipped in the next move. 
 
 \subsection*{Coin Parity}
 \quad \textbf{Coin Parity} is the difference between the number of discs of the player and the number of discs of the opponent.
@@ -54,11 +55,11 @@ For a simple and fast evaluation function, we will assign a weight to each squar
 The result of the function will be something like this:
 
 \[
-  \text{eval}(b) = 
+  \text{$eval$}(b) = 
   \begin{cases}
     -\infty & \text{if MIN won} \\
     \infty & \text{if MAX won} \\
-    \sum_{(i,j) \in b_{MAX}} \text{weight}_{i,j} - \sum_{(i,j) \in b_{MIN}} \text{weight}_{i,j} & \text{otherwise}
+    \sum_{(i,j) \in b_{MAX}} \text{$weight$}_{i,j} - \sum_{(i,j) \in b_{MIN}} \text{$weight$}_{i,j} & \text{otherwise}
   \end{cases}
 \]
 where $b_{MAX}$ is the set of cells occupied by MAX in $b$. Same for $b_{MIN}$.
@@ -77,6 +78,68 @@ The weights of the squares I will be using are:
   \end{bmatrix}
 \]
 
-\section*{?}
+\section*{Mobility-based evaluation function}
+\quad The static weight evaluation function is good, but it doesn't take into account the number of discs on the board and the other factors discussed above.
+
+So, first of all, we will divide the function into two parts:
+\[
+  \text{$eval$}(b) = 
+  \begin{cases}
+    \text{$early\_eval$}(b) & \text{if less than $TH\_EARLY$ moves have been played in $b$} \\
+    \text{$late\_eval$}(b) & \text{if more than $TH\_LATE$ moves have been played in $b$} \\
+    \text{$mid\_eval$}(b) & \text{otherwise}
+  \end{cases}
+\]
+where $TH\_EARLY$ and $TH\_LATE$ are thresholds for deciding when to switch from early to late evaluation.
+
+Both of these functions will be a linear combination of the factors discussed above.
+We will use $O\_atribute$ to describe the value of the attribute for the opponent, and $P\_atribute$ to describe the value of the attribute for the player.
+
+\subsection*{Early evaluation}
+\quad The main difference between the early and the mid/late game is that in the beginning of the game, it could be better to have less discs on the board, since this will give the opponent less moves to choose from.
+This phenomenon is called \textbf{evaporation}.
+
+So, for taking this into account, we will use the following formula: 
+\[
+  \text{coin\_parity} = 100 \cdot \frac{O\_discs - P\_discs}{O\_discs + P\_discs}
+\]
+
+We now have to consider mobility:
+\[
+  \text{mobility} = 100 \cdot \frac{P\_mobility - O\_mobility}{P\_mobility + O\_mobility}
+\]
+\[
+  \text{potential\_mobility} = 100 \cdot \frac{P\_potential - O\_potential}{P\_potential + O\_potential}
+\]
+
+And the stability:
+\[
+  \text{corners} = 
+  \begin{cases}
+    100 \cdot \frac{P\_corners - O\_corners}{P\_corners + O\_corners} & \text{if $P\_corners + O\_corners \neq 0$} \\
+    0 & \text{otherwise}
+  \end{cases}
+\]
+
+As we said, the early evaluation function will be a linear combination of these factors.
+
+\subsection*{Mid evaluation}
+
+We will be using the same factors as in the early evaluation function, but we will change the weights of the factors.
+We will also ignore the evaporation factor, since it is not important in the mid game.
+The focus will be on the mobility of the player and the stability of the discs.
+
+\subsection*{Late evaluation}
+
+In the late game, the most important factor is the number of discs that each player has, so we will focus on the coin parity.
+The function pretty much stays the same, but the weights of the factors will be different.
+
+\section*{Further possible improvements}
+\quad When talking about the mobility-based evaluation function, we can also divide the mid and late game into two separate functions. 
+The function evaluation a late game position can try to reach more leaf nodes and take into who will make the last of the game (since this move adds some discs that cannot be flipped).
+
+Another possible improvement is to use a the ProbCut/Multi-ProbCut algorithm, which is a variation of the alpha-beta pruning algorithm. 
+The algorithm uses a threshold to decide when to stop searching a branch of the tree, and it is based on the ideea that the best move is usually close to the root of the tree.
+The algorithm was shown to be very effective in practice, and it is used in many Othello engines. 
 
 \end{document}

@@ -48,6 +48,20 @@ def get_possible_moves(target, occupied) -> int:
           possible_cells |= encode_cell(x, y)
   return possible_cells
 
+# function to calculate the neighbors of the player
+def get_neighbours(opponent, board) -> int:
+  answer = 0
+  for (i, j) in iterate_over_active_cell(opponent):
+    for dx, dy in consts.DIRECTIONS:
+      x, y = i + dx, j + dy
+      if is_inside(x, y) and (encode_cell(x, y) & board) == 0:
+        answer |= encode_cell(x, y)
+  return answer
+
+# function to count the number of occupied corners
+def count_corners(mask) -> int:
+  return popcount(mask & consts.CORNERS_MASK)
+
 # check if the game is over
 def is_over(white_cells, black_cells) -> bool:
   if white_cells == 0 or black_cells == 0:

@@ -32,9 +32,10 @@ BLACK_PLAYER = True
 DIRECTIONS = [(0, 1), (1, 0), (0, -1), (-1, 0)]
 CAPTURE_DIRECTIONS = [(0, 1), (1, 0), (0, -1), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
 
-# powers of two
+# powers of two + masks
 POWS = [[1 << (i * COLUMNS + j) for j in range(COLUMNS)] for i in range(ROWS)]
 POWS_LOOKUP = {(1 << (i * COLUMNS + j)): (i, j) for i in range(ROWS) for j in range(COLUMNS)}
+CORNERS_MASK = POWS[0][0] | POWS[0][COLUMNS - 1] | POWS[ROWS - 1][0] | POWS[ROWS - 1][COLUMNS - 1]
 
 # font size + gameplay
 FONT_SIZE = 50
@@ -53,6 +54,7 @@ HARD_DEPTH = 6
 # evaluation consts
 INF = POWS[ROWS - 1][COLUMNS - 1] * 2
 EARLY_GAME_THRESHOLD = 14
+LATE_GAME_THRESHOLD = 50
 STATIC_WEIGHTS_BOARD = [
   [99, -8, 8, 6, 6, 8, -8, 99],
   [-8, -24, -4, -3, -3, -4, -24, -8],
@@ -63,3 +65,4 @@ STATIC_WEIGHTS_BOARD = [
   [-8, -24, -4, -3, -3, -4, -24, -8],
   [99, -8, 8, 6, 6, 8, -8, 99]
 ]
+STABILIZER = 100
