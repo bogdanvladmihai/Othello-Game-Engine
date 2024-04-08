@@ -4,6 +4,7 @@ from othello.game import Game
 from othello import board_encoding_helper as helper
 import engine
 import menu
+import time
 
 # function to calulcate the cell from the mouse position
 def calculate_cell(pos) -> tuple:
@@ -13,7 +14,7 @@ def calculate_cell(pos) -> tuple:
   return y // consts.INIT_SQUARE_SIZE, x // consts.INIT_SQUARE_SIZE
 
 # function to print the winner and end the game
-def end_game(white_cells, black_cells, window):
+def end_game(white_cells, black_cells, window, time_elapsed):
   window.fill(consts.BACKGROUND)
   font = pygame.font.Font(None, consts.FONT_SIZE)
   winner_color = consts.PINK
@@ -30,6 +31,11 @@ def end_game(white_cells, black_cells, window):
   text_rect = text.get_rect(center = (consts.WIDTH // 2, consts.HEIGHT // 2))
   final_score = font.render(f"{white_cells} - {black_cells}", True, winner_color)
   final_score_rect = final_score.get_rect(center = (consts.WIDTH // 2, consts.HEIGHT // 2 + consts.FONT_SIZE))
+  # time info
+  time_font = pygame.font.Font(None, consts.FONT_TIME)
+  time_text = time_font.render(f"Duration: {time_elapsed:.2f} seconds", True, consts.BROWN)
+  time_rect = time_text.get_rect(center = (consts.WIDTH // 2, consts.HEIGHT // 2 + 2 * consts.FONT_SIZE))
+  window.blit(time_text, time_rect)
   window.blit(final_score, final_score_rect)
   window.blit(text, text_rect)
   pygame.display.update()
@@ -44,12 +50,14 @@ def end_game(white_cells, black_cells, window):
 def run_game(window, game_engine, engine_player) -> None:
   game = Game(window)
   running = True
+  start_time = time.time()
   while running:
     # check if the game is over
     if game.is_over():
       (white_cells, black_cells) = game.get_score()
       pygame.time.wait(consts.WAIT_GAME_OVER)
-      end_game(white_cells, black_cells, window)
+      end_time = time.time()
+      end_game(white_cells, black_cells, window, end_time - start_time)
       break
     # check if it is the engine's turn
     if game.turn == engine_player:
@@ -84,11 +92,11 @@ def main():
   window = pygame.display.set_mode((consts.WIDTH + consts.OFFSET, consts.HEIGHT + consts.OFFSET))
   pygame.display.set_caption("Othello")
   user_menu = menu.Menu(window)
-  side, depth = user_menu.get_game_settings()
+  side, depth, eval_function = user_menu.get_game_settings()
   if side is None:
     pygame.quit()
     return
-  game_engine = engine.Engine(not side, depth)
+  game_engine = engine.Engine(not side, depth, eval_function)
   run_game(window, game_engine, not side)
   pygame.quit()
 

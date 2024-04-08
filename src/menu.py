@@ -31,6 +31,32 @@ class Menu:
           elif black_rect.collidepoint(pos):
             return consts.BLACK_PLAYER
     return None
+  
+  # gets the evaluation function
+  def get_eval_function(self, color) -> bool:
+    self.window.fill(consts.BACKGROUND)
+    # draw two buttons, one for the weighted board function and one for the mobility based function
+    font = pygame.font.Font(None, consts.BUTTON_FONT_SIZE)
+    info_font = pygame.font.Font(None, consts.FONT_SIZE)
+    weighted_rect = self.plot_button(font, "Weighted board", color, (consts.WIDTH // 2, consts.HEIGHT // 2))
+    mobility_rect = self.plot_button(font, "Mobility based", color, (consts.WIDTH // 2, consts.HEIGHT // 2 + consts.FONT_SIZE))
+    choose_text = info_font.render("Evaluation function", True, consts.BROWN)
+    choose_rect = choose_text.get_rect(center = (consts.WIDTH // 2, consts.HEIGHT // 2 - consts.FONT_SIZE))
+    self.window.blit(choose_text, choose_rect)
+    pygame.display.update()
+    # wait for the user to click on a button
+    running = True
+    while running:
+      for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+          running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+          pos = pygame.mouse.get_pos()
+          if weighted_rect.collidepoint(pos):
+            return consts.WEIGHTED_BOARD
+          elif mobility_rect.collidepoint(pos):
+            return consts.MOBILITY_BASED
+    return None
 
   # gets the dificulty of the game
   def dificulty(self, color) -> int:
@@ -83,4 +109,7 @@ class Menu:
       depth = consts.MEDIUM_DEPTH
     else:
       depth = consts.HARD_DEPTH
-    return side, depth
+    eval_function = self.get_eval_function(color)
+    if eval_function is None:
+      return None, None
+    return side, depth, eval_function

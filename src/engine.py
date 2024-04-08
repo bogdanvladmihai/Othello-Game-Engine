@@ -161,7 +161,9 @@ class Engine:
   def minimax(self, white_cells, black_cells, depth, alpha, beta, maximizing_player) -> tuple:
     # check if we reached a leaf node
     if depth == 0 or helper.is_over(white_cells, black_cells):
-      return self.eval_board_by_discs(white_cells, black_cells), (None, None)
+      if self.eval_function == consts.MOBILITY_BASED:
+        return self.eval_board_by_discs(white_cells, black_cells), (None, None)
+      return self.eval_board(white_cells, black_cells), (None, None)
     if maximizing_player:
       return self.minimax_maximize(white_cells, black_cells, depth, alpha, beta)
     else:

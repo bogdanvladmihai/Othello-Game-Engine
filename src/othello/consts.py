@@ -39,6 +39,7 @@ CORNERS_MASK = POWS[0][0] | POWS[0][COLUMNS - 1] | POWS[ROWS - 1][0] | POWS[ROWS
 
 # font size + gameplay
 FONT_SIZE = 50
+FONT_TIME = 30
 BUTTON_FONT_SIZE = 36
 WAIT_TO_SEE_THE_MOVE = 500
 WAIT_GAME_OVER = 2000
@@ -82,3 +83,7 @@ L1 = 2.1
 L2 = 1.5
 L3 = 1.2
 L4 = 1
+
+# eval function types
+WEIGHTED_BOARD = False
+MOBILITY_BASED = True
