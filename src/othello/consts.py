@@ -25,8 +25,8 @@ BROWN = (140, 69, 16)
 PINK = (255, 102, 255, 100)
 
 # player encoding
-WHITE_PLAYER = True
-BLACK_PLAYER = False
+WHITE_PLAYER = False
+BLACK_PLAYER = True
 
 # directions
 DIRECTIONS = [(0, 1), (1, 0), (0, -1), (-1, 0)]
@@ -40,6 +40,7 @@ POWS_LOOKUP = {(1 << (i * COLUMNS + j)): (i, j) for i in range(ROWS) for j in ra
 FONT_SIZE = 50
 BUTTON_FONT_SIZE = 36
 WAIT_TO_SEE_THE_MOVE = 500
+WAIT_GAME_OVER = 2000
 
 # game dificulty
 DIFICULTY_EASY = 0
@@ -47,7 +48,18 @@ DIFICULTY_MEDIUM = 1
 DIFICULTY_HARD = 2
 EASY_DEPTH = 3
 MEDIUM_DEPTH = 4
-HARD_DEPTH = 5 # hope this is not too optimistic
+HARD_DEPTH = 6
 
 # evaluation consts
 INF = POWS[ROWS - 1][COLUMNS - 1] * 2
+EARLY_GAME_THRESHOLD = 14
+STATIC_WEIGHTS_BOARD = [
+  [99, -8, 8, 6, 6, 8, -8, 99],
+  [-8, -24, -4, -3, -3, -4, -24, -8],
+  [8, -4, 7, 4, 4, 7, -4, 8],
+  [6, -3, 4, 0, 0, 4, -3, 6],
+  [6, -3, 4, 0, 0, 4, -3, 6],
+  [8, -4, 7, 4, 4, 7, -4, 8],
+  [-8, -24, -4, -3, -3, -4, -24, -8],
+  [99, -8, 8, 6, 6, 8, -8, 99]
+]

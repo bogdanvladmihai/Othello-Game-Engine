@@ -1,6 +1,7 @@
 import pygame
 from othello import consts
 from othello.game import Game
+from othello import board_encoding_helper as helper
 import engine
 import menu
 
@@ -47,15 +48,21 @@ def run_game(window, game_engine, engine_player) -> None:
     # check if the game is over
     if game.is_over():
       (white_cells, black_cells) = game.get_score()
+      pygame.time.wait(consts.WAIT_GAME_OVER)
       end_game(white_cells, black_cells, window)
       break
     # check if it is the engine's turn
     if game.turn == engine_player:
       (x, y) = game_engine.get_move(game.board.white_cells, game.board.black_cells)
-      if x is not None and y is not None:
-        pygame.time.wait(consts.WAIT_TO_SEE_THE_MOVE)
+      # if x is not None and y is not None:
+      pygame.time.wait(consts.WAIT_TO_SEE_THE_MOVE)
       game.apply_move(x, y)
+      game.update_board(window)
       continue
+    else:
+      if helper.get_possible_moves(game.board.white_cells, game.board.white_cells | game.board.black_cells) == 0:
+        pygame.time.wait(consts.WAIT_TO_SEE_THE_MOVE * 10)
+        print("You can't move, it's the engine's turn")
     # check for events
     for event in pygame.event.get():
       if event.type == pygame.QUIT:

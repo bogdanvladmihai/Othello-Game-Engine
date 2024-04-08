@@ -16,6 +16,19 @@ def is_inside(i, j) -> bool:
 def get_oposide_direction(dx, dy) -> tuple:
   return -dx, -dy
 
+# returns the number of set bits in the mask
+def popcount(mask) -> int:
+  return mask.bit_count()
+
+# get the winner of the game
+# returns None in case of a draw
+def get_winner(white_cells, black_cells) -> bool:
+  if popcount(white_cells) > popcount(black_cells):
+    return consts.WHITE_PLAYER
+  elif popcount(white_cells) < popcount(black_cells):
+    return consts.BLACK_PLAYER
+  return None
+
 # check if from cell (x, y) by going in direction (dx, dy) we can attack the opponent
 def is_attacking(x, y, dx, dy, opponent, attacker) -> bool:
   while is_inside(x, y) and (opponent & encode_cell(x, y)) > 0:
@@ -37,6 +50,8 @@ def get_possible_moves(target, occupied) -> int:
 
 # check if the game is over
 def is_over(white_cells, black_cells) -> bool:
+  if white_cells == 0 or black_cells == 0:
+    return True
   board = white_cells | black_cells
   answer = board == 2 * consts.POWS[consts.ROWS - 1][consts.COLUMNS - 1] - 1
   # check if neither player can make a move

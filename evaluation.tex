@@ -1,0 +1,82 @@
+\documentclass{article}
+\usepackage{amsmath}
+
+\title{Othello Heuristics for Evaluation Functions}
+\author{Vlad-Mihai Bogdan}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Introduction}
+\subsection*{Thing to consider when designing an evaluation function}
+
+\quad Othello is a game with a $8 x 8$ board, so the number of possible games can pe weakly estimated to be $3^{64}$. 
+This means that the search space is huge, and the evaluation function is crucial for the performance of the engine.
+
+Creating a good heuristic is a difficult task, as it requires a deep understanding of the game. 
+And since I don't have, I will just try to focus on the most important aspects of the game.
+
+The factors that I will consider are:
+\begin{itemize}
+  \item Mobility
+  \item Stability
+  \item Coin Parity
+  \item Corners and the weight of each square
+\end{itemize}
+
+\subsection*{Mobility}
+\quad \textbf{Mobility} is the number of legal moves that a player has. 
+As a general rule, the less moves a player has, the worse the position is, since it means that the player may be forced to make a bad move.
+
+Mobility comes in two forms: \textbf{Actual mobility} and \textbf{Potential mobility}. 
+Actual mobility is simply calculated by counting the number of legal moves that a player has.
+Potential mobility is the number of squares that are adjacent to at least one of opponent's discs.
+
+\subsection*{Stability}
+\quad \textbf{Stability} is the number of discs that can't be flipped. 
+Such discs are called \textbf{stable discs}. For example, the corners are stable discs, since they can't be flipped.
+Since the goal of the game is to have as many discs as possible, knowing the number of discs that will defenetly be yours is important.
+
+\subsection*{Coin Parity}
+\quad \textbf{Coin Parity} is the difference between the number of discs of the player and the number of discs of the opponent.
+This is defenetly as important as the other factors, since a single move can flip up to $18$ discs.
+
+\subsection*{Corners and the weight of each square}
+\quad The \textbf{corners} are the most important squares in the game, since they are stable. 
+This gives us the ideea that the neighbouring squares of the corners are not good to capture, as they would lead to the loss of the corner.
+Using this ideea, we will assign a weight to each square, based on its importance.
+
+\section*{Static weight evaluation function}
+\quad As we said, different squares have different importance. 
+For a simple and fast evaluation function, we will assign a weight to each square, based on its importance.
+The result of the function will be something like this:
+
+\[
+  \text{eval}(b) = 
+  \begin{cases}
+    -\infty & \text{if MIN won} \\
+    \infty & \text{if MAX won} \\
+    \sum_{(i,j) \in b_{MAX}} \text{weight}_{i,j} - \sum_{(i,j) \in b_{MIN}} \text{weight}_{i,j} & \text{otherwise}
+  \end{cases}
+\]
+where $b_{MAX}$ is the set of cells occupied by MAX in $b$. Same for $b_{MIN}$.
+
+The weights of the squares I will be using are:
+\[
+  \begin{bmatrix}
+    99 & -8 & 8 & 6 & 6 & 8 & -8 & 99 \\
+    -8 & -24 & -4 & -3 & -3 & -4 & -25 & -8 \\
+    8 & -4 & 7 & 4 & 4 & 7 & -4 & 8 \\
+    6 & -3 & 4 & 0 & 0 & 4 & -3 & 6 \\
+    6 & -3 & 4 & 0 & 0 & 4 & -3 & 6 \\
+    8 & -4 & 7 & 4 & 4 & 7 & -4 & 8 \\
+    -8 & -24 & -4 & -3 & -3 & -4 & -25 & -8 \\
+    99 & -8 & 8 & 6 & 6 & 8 & -8 & 99 \\
+  \end{bmatrix}
+\]
+
+\section*{?}
+
+\end{document}
